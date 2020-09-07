@@ -1,0 +1,6 @@
+nome = input('Escreva o seu nome completo - ').strip().split()
+print()
+primeiro_nome = nome[0].title()
+ultimo_nome = nome[int(len(nome))-1].title()
+print('O primeiro nome é {}.'.format(primeiro_nome))
+print('O último nome é {}.'.format(ultimo_nome))

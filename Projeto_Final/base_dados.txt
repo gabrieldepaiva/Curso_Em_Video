@@ -1,0 +1,4 @@
+Gabriel;200;
+Joï¿½o;30;
+José;30;
+Gabriela;23;

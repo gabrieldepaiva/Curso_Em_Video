@@ -1,0 +1,5 @@
+frase = input('Escreva uma frase qualquer - ').split()
+print()
+print('A primeira vez que a letra "a" aparece é na posição {}ª.'.format((frase.lower().find('a'))+1))
+print('A última vez que a letra "a" aparece é na posição {}ª.'.format((frase.lower().rfind('a'))+1))
+print('O caractere "a" aparece {} vezes.'.format(frase.count('a')))
