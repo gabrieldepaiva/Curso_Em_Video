@@ -1,2 +1,2 @@
 # Curso_Em_Video
- Códigos Fonte do curso de Python do Curso em Vídeo
+ Códigos Fonte de exercícios propostos da plataforma do curso em vídeo
