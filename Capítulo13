@@ -1,0 +1,912 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled0.ipynb",
+      "provenance": [],
+      "authorship_tag": "ABX9TyO14h7AZSCqqcHha+G7BsFe",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/gabrieldepaiva/Exercicios-CursoEmVideo/blob/master/Cap%C3%ADtulo13\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "KwVP1WINyaOJ"
+      },
+      "source": [
+        "## Análise, Exploração e Manipulação dos Dados"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VRj-LbjcyQUf"
+      },
+      "source": [
+        "import pandas as pd\r\n",
+        "from sklearn.utils import resample\r\n",
+        "import seaborn as sns\r\n",
+        "import matplotlib.pyplot as plt"
+      ],
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5DDYvGn5yvjL"
+      },
+      "source": [
+        "url = 'https://raw.githubusercontent.com/gabrieldepaiva/Exercicios-DataScienceAcademy/master/dadosRH.csv'\r\n",
+        "dadosRH = pd.read_csv(url)"
+      ],
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 195
+        },
+        "id": "22DiRzUIy04k",
+        "outputId": "f88f5817-9c4e-4f7b-a306-c9f78a1803b5"
+      },
+      "source": [
+        "dadosRH.head()"
+      ],
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>id_funcionario</th>\n",
+              "      <th>departmento</th>\n",
+              "      <th>regiao</th>\n",
+              "      <th>educacao</th>\n",
+              "      <th>genero</th>\n",
+              "      <th>canal_recrutamento</th>\n",
+              "      <th>numero_treinamentos</th>\n",
+              "      <th>idade</th>\n",
+              "      <th>aval_ano_anterior</th>\n",
+              "      <th>tempo_servico</th>\n",
+              "      <th>promovido</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>65438</td>\n",
+              "      <td>Marketing</td>\n",
+              "      <td>Sudeste</td>\n",
+              "      <td>Mestrado ou Doutorado</td>\n",
+              "      <td>F</td>\n",
+              "      <td>Outsourcing</td>\n",
+              "      <td>1</td>\n",
+              "      <td>35</td>\n",
+              "      <td>5.0</td>\n",
+              "      <td>8</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>65141</td>\n",
+              "      <td>Logistica</td>\n",
+              "      <td>Nordeste</td>\n",
+              "      <td>Superior</td>\n",
+              "      <td>M</td>\n",
+              "      <td>Outro</td>\n",
+              "      <td>1</td>\n",
+              "      <td>30</td>\n",
+              "      <td>5.0</td>\n",
+              "      <td>4</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>7513</td>\n",
+              "      <td>Marketing</td>\n",
+              "      <td>Sudeste</td>\n",
+              "      <td>Superior</td>\n",
+              "      <td>M</td>\n",
+              "      <td>Outsourcing</td>\n",
+              "      <td>1</td>\n",
+              "      <td>34</td>\n",
+              "      <td>3.0</td>\n",
+              "      <td>7</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>2542</td>\n",
+              "      <td>Marketing</td>\n",
+              "      <td>Norte</td>\n",
+              "      <td>Superior</td>\n",
+              "      <td>M</td>\n",
+              "      <td>Outro</td>\n",
+              "      <td>2</td>\n",
+              "      <td>39</td>\n",
+              "      <td>1.0</td>\n",
+              "      <td>10</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>48945</td>\n",
+              "      <td>Tecnologia</td>\n",
+              "      <td>Nordeste</td>\n",
+              "      <td>Superior</td>\n",
+              "      <td>M</td>\n",
+              "      <td>Outro</td>\n",
+              "      <td>1</td>\n",
+              "      <td>45</td>\n",
+              "      <td>3.0</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   id_funcionario departmento  ... tempo_servico promovido\n",
+              "0           65438   Marketing  ...             8         0\n",
+              "1           65141   Logistica  ...             4         0\n",
+              "2            7513   Marketing  ...             7         0\n",
+              "3            2542   Marketing  ...            10         0\n",
+              "4           48945  Tecnologia  ...             2         0\n",
+              "\n",
+              "[5 rows x 11 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "GW3E_snxzgVb",
+        "outputId": "ade5f322-6cd1-4fc6-c556-4fb3204fd323"
+      },
+      "source": [
+        "# Descritivo da quantidade de linhas e colunas que compõem a base de dados\r\n",
+        "\r\n",
+        "dadosRH.shape"
+      ],
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(54808, 11)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 5
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "o-3lfpQRzsG2",
+        "outputId": "8bec3362-68b1-47d5-b1ca-522a265f1f9e"
+      },
+      "source": [
+        "# Verificação da quantidade de valores nulos por coluna\r\n",
+        "\r\n",
+        "dadosRH.isnull().sum()"
+      ],
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "id_funcionario            0\n",
+              "departmento               0\n",
+              "regiao                    0\n",
+              "educacao               2409\n",
+              "genero                    0\n",
+              "canal_recrutamento        0\n",
+              "numero_treinamentos       0\n",
+              "idade                     0\n",
+              "aval_ano_anterior      4124\n",
+              "tempo_servico             0\n",
+              "promovido                 0\n",
+              "dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 166
+        },
+        "id": "1J-vxjSrz1bS",
+        "outputId": "17e9a23b-9c99-4a99-e5c5-69675b1d2846"
+      },
+      "source": [
+        "# Agrupamento por dados tendo por base alguma coluna específica da base de dados\r\n",
+        "\r\n",
+        "dadosRH.groupby(['educacao']).count()"
+      ],
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>id_funcionario</th>\n",
+              "      <th>departmento</th>\n",
+              "      <th>regiao</th>\n",
+              "      <th>genero</th>\n",
+              "      <th>canal_recrutamento</th>\n",
+              "      <th>numero_treinamentos</th>\n",
+              "      <th>idade</th>\n",
+              "      <th>aval_ano_anterior</th>\n",
+              "      <th>tempo_servico</th>\n",
+              "      <th>promovido</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>educacao</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>Ensino Medio</th>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>458</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Mestrado ou Doutorado</th>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14798</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Superior</th>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>33404</td>\n",
+              "      <td>36669</td>\n",
+              "      <td>36669</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "                       id_funcionario  departmento  ...  tempo_servico  promovido\n",
+              "educacao                                            ...                          \n",
+              "Ensino Medio                      805          805  ...            805        805\n",
+              "Mestrado ou Doutorado           14925        14925  ...          14925      14925\n",
+              "Superior                        36669        36669  ...          36669      36669\n",
+              "\n",
+              "[3 rows x 10 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Q5sQz21A0HfP"
+      },
+      "source": [
+        "# Preenchendo o dataset com valores vazios\r\n",
+        "# Preencher na coluna \"educacao\" os valores nulos com a moda dos valores preenchidos\r\n",
+        "\r\n",
+        "dadosRH['educacao'].fillna(dadosRH['educacao'].mode()[0], inplace = True)"
+      ],
+      "execution_count": 10,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5t97icsH0m9J"
+      },
+      "source": [
+        "# Preencher a coluna \"aval_ano_anterior com a mediana dos valores já preenchidos\"\r\n",
+        "\r\n",
+        "dadosRH['aval_ano_anterior'].fillna(dadosRH['aval_ano_anterior'].median(), inplace = True)"
+      ],
+      "execution_count": 11,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 166
+        },
+        "id": "UWcpekCm12Y7",
+        "outputId": "2d41417d-2d00-43e2-b5be-009e13173aa6"
+      },
+      "source": [
+        "# Apenas para verificar se todas as células foram contabilizadas\r\n",
+        "\r\n",
+        "dadosRH.groupby(['educacao']).count()"
+      ],
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>id_funcionario</th>\n",
+              "      <th>departmento</th>\n",
+              "      <th>regiao</th>\n",
+              "      <th>genero</th>\n",
+              "      <th>canal_recrutamento</th>\n",
+              "      <th>numero_treinamentos</th>\n",
+              "      <th>idade</th>\n",
+              "      <th>aval_ano_anterior</th>\n",
+              "      <th>tempo_servico</th>\n",
+              "      <th>promovido</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>educacao</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>Ensino Medio</th>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "      <td>805</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Mestrado ou Doutorado</th>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "      <td>14925</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Superior</th>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "      <td>39078</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "                       id_funcionario  departmento  ...  tempo_servico  promovido\n",
+              "educacao                                            ...                          \n",
+              "Ensino Medio                      805          805  ...            805        805\n",
+              "Mestrado ou Doutorado           14925        14925  ...          14925      14925\n",
+              "Superior                        39078        39078  ...          39078      39078\n",
+              "\n",
+              "[3 rows x 10 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 12
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 136
+        },
+        "id": "MOUODuEk2Ezd",
+        "outputId": "79ae0302-27ec-4398-f1e1-c4e47eca6aab"
+      },
+      "source": [
+        "dadosRH.groupby(['promovido']).count()"
+      ],
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>id_funcionario</th>\n",
+              "      <th>departmento</th>\n",
+              "      <th>regiao</th>\n",
+              "      <th>educacao</th>\n",
+              "      <th>genero</th>\n",
+              "      <th>canal_recrutamento</th>\n",
+              "      <th>numero_treinamentos</th>\n",
+              "      <th>idade</th>\n",
+              "      <th>aval_ano_anterior</th>\n",
+              "      <th>tempo_servico</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>promovido</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "      <td>50140</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "      <td>4668</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "           id_funcionario  departmento  ...  aval_ano_anterior  tempo_servico\n",
+              "promovido                               ...                                  \n",
+              "0                   50140        50140  ...              50140          50140\n",
+              "1                    4668         4668  ...               4668           4668\n",
+              "\n",
+              "[2 rows x 10 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 13
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 350
+        },
+        "id": "4zPVh9fJ2LAQ",
+        "outputId": "66be9b32-432a-476c-e5b8-d13db9451ea7"
+      },
+      "source": [
+        "sns.countplot(dadosRH['promovido'])"
+      ],
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/seaborn/_decorators.py:43: FutureWarning: Pass the following variable as a keyword arg: x. From version 0.12, the only valid positional argument will be `data`, and passing other arguments without an explicit keyword will result in an error or misinterpretation.\n",
+            "  FutureWarning\n"
+          ],
+          "name": "stderr"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<matplotlib.axes._subplots.AxesSubplot at 0x7fbb3dafa4a8>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 14
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "XU0qiJY92VkP"
+      },
+      "source": [
+        "classe_majoritaria = dadosRH[dadosRH.promovido==0]\r\n",
+        "classe_minoritaria = dadosRH[dadosRH.promovido==1]"
+      ],
+      "execution_count": 15,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "DhNXbK9r2mfo",
+        "outputId": "467bf99e-2864-4f77-b444-f8530e901f3f"
+      },
+      "source": [
+        "classe_majoritaria.shape\r\n",
+        "classe_minoritaria.shape"
+      ],
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(4668, 11)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 16
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qCPfi1b_20lM"
+      },
+      "source": [
+        "df_classe_minoritaria_upsampled = resample(classe_minoritaria, n_samples = 50140, random_state = 150, replace = True)"
+      ],
+      "execution_count": 17,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "oa4HzLkZ3JsH"
+      },
+      "source": [
+        "datasetRH = pd.concat([classe_majoritaria, df_classe_minoritaria_upsampled])"
+      ],
+      "execution_count": 18,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "KNUcS3NY3V5c",
+        "outputId": "b8388e7b-0dee-4010-eb87-e48518ec4ae1"
+      },
+      "source": [
+        "datasetRH.shape"
+      ],
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(100280, 11)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 19
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 350
+        },
+        "id": "bAs51uRX3eG-",
+        "outputId": "5b09ade8-7b10-40c6-b277-32b63319ca67"
+      },
+      "source": [
+        "sns.countplot(datasetRH['promovido'])"
+      ],
+      "execution_count": 21,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/seaborn/_decorators.py:43: FutureWarning: Pass the following variable as a keyword arg: x. From version 0.12, the only valid positional argument will be `data`, and passing other arguments without an explicit keyword will result in an error or misinterpretation.\n",
+            "  FutureWarning\n"
+          ],
+          "name": "stderr"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<matplotlib.axes._subplots.AxesSubplot at 0x7fbb3c3801d0>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 21
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "uIDV3QfG6TZ3"
+      },
+      "source": [
+        "datasetRH.to_csv('tabela_pronta.csv', encoding='utf-8',index=False)"
+      ],
+      "execution_count": 23,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mw7jpEl-346K"
+      },
+      "source": [
+        "## Resolvendo os problemas de negócios"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 128
+        },
+        "id": "qUGkvCqQ4OrB",
+        "outputId": "442e6621-8e55-472d-8b76-45c32b1d310b"
+      },
+      "source": [
+        "tab = datasetRH['']\r\n",
+        "tab.head()"
+      ],
+      "execution_count": 40,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "SyntaxError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;36m  File \u001b[0;32m\"<ipython-input-40-7e7a29dfe14c>\"\u001b[0;36m, line \u001b[0;32m1\u001b[0m\n\u001b[0;31m    tab = datasetRH[][5:]\u001b[0m\n\u001b[0m                    ^\u001b[0m\n\u001b[0;31mSyntaxError\u001b[0m\u001b[0;31m:\u001b[0m invalid syntax\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "QzCJZ5cy81Q1"
+      },
+      "source": [
+        "sns.heatmap(correlacao, cmap = 'Y10rRd')\r\n",
+        "plt.show"
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
